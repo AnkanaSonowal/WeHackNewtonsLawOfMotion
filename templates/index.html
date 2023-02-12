@@ -1,0 +1,153 @@
+<!--<html>-->
+<!--  <head>-->
+<!--    <title>Guessing Game</title>-->
+<!--  </head>-->
+<!--  <body>-->
+<!--    <h1>Guessing Game</h1>-->
+<!--    <form method="post" action="{{ url_for('guess') }}">-->
+<!--      <input type="hidden" name="target" value="{{ target }}">-->
+<!--      <label>Enter your guess:</label>-->
+<!--      <input type="text" name="guess">-->
+<!--      <input type="submit" value="Guess">-->
+<!--    </form>-->
+<!--    {% if result %}-->
+<!--      <p>{{ result }}</p>-->
+<!--    {% endif %}-->
+<!--  </body>-->
+<!--</html>-->
+
+<html>
+  <head>
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.2.0/lib/p5.min.js"></script>
+    <script>
+       let balls = [];
+        let ballCount = 5;
+        let leftBallValue = 0;
+        let rightBallValue = 0;
+        var leftBalls = [30, 50, 70, 90, 110];
+        var rightBalls = [2, 4, 6, 8, 10];
+        let bottomBallValue = 100;
+        let leftBallImages = []; // Array to store left ball images
+
+          function preload() {
+          // Load all left ball images
+          for (let i = 0; i < leftBalls.length; i++) {
+          leftBallImages[i] = loadImage("https://cdn.pixabay.com/photo/2013/07/13/10/51/football-157930_1280.png");
+          }
+          }
+        function setup() {
+          createCanvas(displayWidth, displayHeight);
+
+          for (let i = 0; i < ballCount; i++) {
+            let x = width / 10;
+            let y = i * (height / (ballCount + 1)) + (height / (ballCount + 1));
+            let ball = new Ball(x, y, leftBalls[i], "left");
+            ball.img = leftBallImages[i];
+            balls.push(ball);
+          }
+
+          for (let i = 0; i < ballCount; i++) {
+            let x = width - (width / 10);
+            let y = i * (height / (ballCount + 1)) + (height / (ballCount + 1));
+            let ball = new Ball(x, y, rightBalls[i], "right");
+            balls.push(ball);
+          }
+
+          let x = width / 2;
+          let y = height - (height / 10);
+          let ball = new Ball(x, y, 100, "bottom");
+          balls.push(ball);
+        }
+
+        function draw() {
+          background(255);
+
+          for (let i = 0; i < balls.length; i++) {
+            balls[i].show();
+          }
+
+          if (leftBallValue * rightBallValue === bottomBallValue) {
+            fill(0);
+            textAlign(CENTER, CENTER);
+            text("You got it right", width / 2, height / 2);
+
+          } else{
+              fill(0);
+              textAlign(CENTER, CENTER);
+              text("Try", width / 2, height / 2);
+          }
+
+        }
+
+        function mousePressed() {
+          let leftBallSelected = false;
+          let rightBallSelected = false;
+          for (let i = 0; i < balls.length; i++) {
+            if (dist(mouseX, mouseY, balls[i].x, balls[i].y) < 50) {
+              if (balls[i].side === "left") {
+                leftBallValue = balls[i].value;
+                leftBallSelected = true;
+              } else if (balls[i].side === "right") {
+                rightBallValue = balls[i].value;
+                rightBallSelected = true;
+              } else if (balls[i].side === "bottom") {
+                bottomBallValue = balls[i].value;
+              }
+
+                if( leftBallSelected && rightBallSelected ){
+                   if( leftBallValue*rightBallValue === bottomBallValue)
+                   {
+                             fill(0);
+                      textAlign(CENTER, CENTER);
+                      text("You got it right", width / 2, height / 2);
+                      updateBottomBall();
+                   }
+              }
+
+            }
+          }
+
+
+          console.log("Left Ball Value:", leftBallValue);
+          console.log("Right Ball Value:", rightBallValue);
+          console.log("Bottom Ball Value:", bottomBallValue);
+
+
+        }
+        function updateBottomBall() {
+          bottomBallValue = leftBalls[Math.floor(Math.random() * leftBalls.length)] * rightBalls[Math.floor(Math.random() * rightBalls.length)];
+        }
+
+        class Ball {
+          constructor(x, y, value, side) {
+            this.x = x;
+            this.y = y;
+            this.value = value;
+            this.side = side;
+          }
+
+          show()
+          {
+            if (this.side === "left" || this.side === "right") {
+            fill(0);
+            } else if (this.side === "bottom") {
+              fill(255, 255, 0)
+              }
+            else {
+            fill(255);
+            }
+            ellipse(this.x, this.y, 50, 50);
+            fill(255);
+            if(this.side === "bottom"){
+            fill(0);
+            }
+            textAlign(CENTER, CENTER);
+            text(this.value, this.x, this.y);
+          }
+        }
+
+    </script>
+  </head>
+  <body>
+  </body>
+</html>
